@@ -77,6 +77,7 @@ public class FastIK : MonoBehaviour
 
     private void LateUpdate()
     {
+        DrawLine();
         ResolveIK();
     }
 
@@ -170,6 +171,35 @@ public class FastIK : MonoBehaviour
             Handles.color = Color.green;
             Handles.DrawWireCube(Vector3.up * 0.5f, Vector3.one);
             current = current.parent;
+        }
+    }
+
+    private void DrawLine()
+    {
+        if(GetComponent<LineRenderer>() != null)
+        {
+        var line = gameObject.GetComponent<LineRenderer>();
+        Vector3[] dots = new Vector3[Bones.Length];
+        for(int i = 0; i < Bones.Length; i++)
+        {
+            dots[i] = Bones[i].position;
+        }
+        line.positionCount = dots.Length;
+        line.SetPositions(dots);
+        line.enabled = true;
+        }
+        else if(GetComponent<LineRenderer>() == null)
+        {
+            var line = gameObject.AddComponent<LineRenderer>();
+            Vector3[] dots = new Vector3[Bones.Length];
+            for(int i = 0; i < Bones.Length; i++)
+            {
+                dots[i] = Bones[i].position;
+            }
+            line.material = new Material(Shader.Find("Sprites/Default"));
+            line.positionCount = dots.Length;
+            line.SetPositions(dots);
+            line.enabled = true;
         }
     }
 }
