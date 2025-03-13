@@ -10,10 +10,12 @@ public class GrapperRobot : MonoBehaviour
     public Transform targetTransform;
     public float viewRange = 1f;
     public float bouncePower = 1f;
+    public float moveSpeed = 1f;
 
     private FastIK ik;
     private Vector2 proceduralInitialPosition;
     private CircleCollider2D col;
+    private Coroutine moveRoutine;
 
     private void Start()
     {
@@ -23,17 +25,13 @@ public class GrapperRobot : MonoBehaviour
         col.radius = viewRange;
     }
 
-    private void Update()
-    {
-        MoveToTarget();
-    }
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.GetComponent<PlayerController>() != null)
         {
             SetTarget(collision.transform);
             TargetCatched(collision.transform);
+            MoveToTarget();
         }
     }
 
@@ -43,6 +41,7 @@ public class GrapperRobot : MonoBehaviour
         {
             SetTarget(null);
             proceduralTarget.transform.position = proceduralInitialPosition;
+            StopCoroutine(moveRoutine);
         }
     }
 
@@ -68,7 +67,19 @@ public class GrapperRobot : MonoBehaviour
         if(proceduralTarget == null || targetTransform == null)
             return;
 
-        proceduralTarget.position = targetTransform.position;
+        if(moveRoutine != null)
+            StopCoroutine(moveRoutine);
+        moveRoutine = StartCoroutine("MoveRoutine");
+    }
+
+    private IEnumerator MoveRoutine()
+    {
+        while(true)
+        {
+            yield return null;
+            
+            proceduralTarget.position = Vector2.Lerp(proceduralTarget.position, targetTransform.position, moveSpeed * Time.deltaTime);
+        }
     }
 
     private void OnDrawGizmos()

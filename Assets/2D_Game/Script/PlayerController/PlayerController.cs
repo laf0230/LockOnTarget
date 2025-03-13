@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour, IInterectionable, IDamageable
     public float jumpPower;
     public float ropeCoolTime;
     [SerializeField] private Transform body;
+    [SerializeField] private Transform hand;
 
     private bool isKnockBack = false;
     Rigidbody2D rb;
@@ -40,6 +41,7 @@ public class PlayerController : MonoBehaviour, IInterectionable, IDamageable
 
     private void Update()
     {
+        HandTowardToTarget();
         rope.RopeTracking();
         if (isTalking)
             return;
@@ -116,6 +118,17 @@ public class PlayerController : MonoBehaviour, IInterectionable, IDamageable
         {
             direction = Vector3.right;
         }
+    }
+
+    private void HandTowardToTarget()
+    {
+        // calc mouse positon using trigonometry
+        var direction = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
+
+        float rot_z = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
+        // 주어진 것: 중심점, 목표 위치
+        hand.rotation = Quaternion.Euler(0f, 0f, rot_z);
     }
 
     #region Interection Function

@@ -157,7 +157,6 @@ public class FastIK : MonoBehaviour
             else
                 Bones[i].rotation = Quaternion.FromToRotation(StartDirectionsSucc[i], Positions[i + 1] - Positions[i]) * StartRotationBone[i];
                 Bones[i].position = Positions[i];
-
         }
     }
 
@@ -176,29 +175,32 @@ public class FastIK : MonoBehaviour
 
     private void DrawLine()
     {
-        if(GetComponent<LineRenderer>() != null)
+        if (GetComponent<LineRenderer>() != null)
         {
-        var line = gameObject.GetComponent<LineRenderer>();
-        Vector3[] dots = new Vector3[Bones.Length];
-        for(int i = 0; i < Bones.Length; i++)
-        {
-            dots[i] = Bones[i].position;
+            var line = gameObject.GetComponent<LineRenderer>();
+            Vector3[] dots = new Vector3[Bones.Length];
+            for (int i = 0; i < Bones.Length; i++)
+            {
+                dots[i] = Bones[i].position;
+            }
+            line.positionCount = dots.Length;
+            line.SetPositions(dots);
+            line.enabled = true;
         }
-        line.positionCount = dots.Length;
-        line.SetPositions(dots);
-        line.enabled = true;
-        }
-        else if(GetComponent<LineRenderer>() == null)
+        else if (GetComponent<LineRenderer>() == null)
         {
             var line = gameObject.AddComponent<LineRenderer>();
             Vector3[] dots = new Vector3[Bones.Length];
-            for(int i = 0; i < Bones.Length; i++)
+            for (int i = 0; i < Bones.Length; i++)
             {
                 dots[i] = Bones[i].position;
             }
             line.material = new Material(Shader.Find("Sprites/Default"));
             line.positionCount = dots.Length;
             line.SetPositions(dots);
+            line.startWidth = 0.2f;
+            line.numCornerVertices = 50;
+            line.numCapVertices = 50;
             line.enabled = true;
         }
     }
